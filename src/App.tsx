@@ -1,9 +1,7 @@
-function App() {
+export function App() {
   return (
     <>
       PassIn
     </>
   )
 }
-
-export default App
