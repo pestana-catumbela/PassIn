@@ -1,4 +1,5 @@
 import { ComponentProps } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface IconButtonProps extends ComponentProps<'button'> {
     transparent?: boolean;
@@ -9,10 +10,11 @@ export function IconButton({ transparent, ...props }: IconButtonProps) {
         <>
             <button
                 {...props}
-                className={transparent 
-                    ? "bg-black/20 border border-white/10 p-1.5 rounded"
-                    : "bg-white/10 border border-white/10 p-1.5 rounded"
-                } 
+                className={twMerge(
+                    "bg-white/10 border border-white/10 p-1.5 rounded",
+                    transparent ? "bg-black/20" : "bg-white/10",
+                    props.disabled ? "opacity-50" : null
+                )}
             />
         </>
     );
