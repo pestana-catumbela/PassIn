@@ -23,9 +23,25 @@ interface Attendee {
 
 export function AttendeeList() {
     const [attendees, setAttendees] = useState<Attendee[]>([]);
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState(() => {
+        const url = new URL(window.location.toString());
+
+        if(url.searchParams.has('search')) {
+            return url.searchParams.get('search') ?? '';
+        }
+
+        return '';
+    });
     const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(() => {
+        const url = new URL(window.location.toString());
+
+        if(url.searchParams.has('page')) {
+            return Number(url.searchParams.get('page'));
+        }
+
+        return 1;
+    });
 
     const totalPage = Math.ceil(total / 10);
 
@@ -46,9 +62,29 @@ export function AttendeeList() {
             })
     }, [page, search])
 
+    function setCurrentSearch(search: string) {
+        const url = new URL(window.location.toString());
+
+        url.searchParams.set('search', search);
+
+        window.history.pushState({}, "", url);
+
+        setSearch(search);
+    }
+
+    function setCurrentPage(page: number) {
+        const url = new URL(window.location.toString());
+
+        url.searchParams.set('page', String(page));
+
+        window.history.pushState({}, "", url);
+
+        setPage(page);
+    }
+
     function onSearchInputChanged(event: ChangeEvent<HTMLInputElement>) {
-        setSearch(event.target.value);
-        setPage(1);
+        setCurrentSearch(event.target.value);
+        setCurrentPage(1);
     }
 
     return(
@@ -58,7 +94,7 @@ export function AttendeeList() {
 
                 <div className="px-3 w-72 py-1.5 border border-white/10 rounded-lg text-sm flex items-center gap-3">
                     <Search className="size-4 text-[#9FF9CC]" />
-                    <input className="bg-transparent flex-1 border-none outline-none focus:ring-0" placeholder="Buscar Participante..." onChange={onSearchInputChanged} />
+                    <input className="bg-transparent flex-1 border-none outline-none focus:ring-0" placeholder="Buscar Participante..." value={search} onChange={onSearchInputChanged} />
                 </div>
             </div>
  
@@ -116,16 +152,16 @@ export function AttendeeList() {
                                 <span>Página {page} de {totalPage}</span>
 
                                 <div className="flex gap-1.5">
-                                    <IconButton onClick={() => setPage(1)} disabled={page === 1}>
+                                    <IconButton onClick={() => setCurrentPage(1)} disabled={page === 1}>
                                         <ChevronsLeft className="size-4" />
                                     </IconButton>
-                                    <IconButton onClick={() => setPage(page - 1)} disabled={page === 1}>
+                                    <IconButton onClick={() => setCurrentPage(page - 1)} disabled={page === 1}>
                                         <ChevronLeft className="size-4" />
                                     </IconButton>
-                                    <IconButton onClick={() => setPage(page + 1)} disabled={page === totalPage}>
+                                    <IconButton onClick={() => setCurrentPage(page + 1)} disabled={page === totalPage}>
                                         <ChevronRight className="size-4" />
                                     </IconButton>
-                                    <IconButton onClick={() => setPage(totalPage)} disabled={page === totalPage}>
+                                    <IconButton onClick={() => setCurrentPage(totalPage)} disabled={page === totalPage}>
                                         <ChevronsRight className="size-4" />
                                     </IconButton>
                                 </div>
