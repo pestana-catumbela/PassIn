@@ -7,7 +7,7 @@ import { Search, MoreHorizontal, ChevronsLeft, ChevronLeft, ChevronRight, Chevro
 import { TableHeader } from './table/table-header';
 import { TableCell } from './table/table-cell';
 import { TableRow } from './table/table-row';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 // import { attendees } from '../datas/attendees';
 
 Dayjs.extend(RelativeTime);
@@ -23,20 +23,33 @@ interface Attendee {
 
 export function AttendeeList() {
     const [attendees, setAttendees] = useState<Attendee[]>([]);
-    const [state, setState] = useState("");
+    const [search, setSearch] = useState("");
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
 
     const totalPage = Math.ceil(total / 10);
 
     useEffect(() => {
-        fetch(`http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees?pageIndex=${page - 1}`)
+        const url = new URL('http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees?');
+
+        url.searchParams.set('pageIndex', String(page - 1));
+
+        if(search.length > 0){
+            url.searchParams.set('query', search);
+        }
+
+        fetch(url)
             .then(res => res.json())
             .then(data => {
                 setAttendees(data.attendees);
                 setTotal(data.total);
             })
-    }, [page])
+    }, [page, search])
+
+    function onSearchInputChanged(event: ChangeEvent<HTMLInputElement>) {
+        setSearch(event.target.value);
+        setPage(1);
+    }
 
     return(
         <>
@@ -45,9 +58,8 @@ export function AttendeeList() {
 
                 <div className="px-3 w-72 py-1.5 border border-white/10 rounded-lg text-sm flex items-center gap-3">
                     <Search className="size-4 text-[#9FF9CC]" />
-                    <input className="bg-transparent flex-1 border-none outline-none" placeholder="Buscar Participante..." onChange={(e) => setState(e.target.value)} />
+                    <input className="bg-transparent flex-1 border-none outline-none focus:ring-0" placeholder="Buscar Participante..." onChange={onSearchInputChanged} />
                 </div>
-                {state}
             </div>
  
             <TableComponent>
