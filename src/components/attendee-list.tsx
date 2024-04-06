@@ -130,7 +130,9 @@ export function AttendeeList() {
                                 <TableCell>
                                     {attendee.checkedInAt 
                                         ? <span className="text-zinc-400">Não fez check-in</span> 
-                                        : Dayjs().to(attendee.checkedInAt)}</TableCell>
+                                        : Dayjs().to(attendee.checkedInAt)
+                                    }
+                                </TableCell>
                                 <TableCell>
                                     <IconButton transparent>
                                         <MoreHorizontal className="size-4" />
