@@ -19,3 +19,6 @@ Participant management application for an in-person event (NLW Unite - Rocketsea
   ```bash
   npm run dev
   ```
+
+### App Screen
+![App Screen](https://github.com/pestana-catumbela/PassIn/blob/main/src/assets/PassIn.png)
